@@ -12,16 +12,17 @@
   color-scheme: light;
 
   /* Paper and ink. Neutrals carry a slight warm bias toward the oxblood accent. */
-  --paper:        #fbfaf8;
-  --paper-sunk:   #f4f1ed;
-  --ink:          #1a1614;
-  --ink-2:        #56504c;
-  --ink-3:        #8a827c;
-  --rule:         #e4dfd8;
-  --rule-strong:  #cdc6bd;
-  --accent:       #8c2f26;
-  --accent-wash:  rgba(140, 47, 38, 0.07);
-  --row-hover:    rgba(26, 22, 20, 0.035);
+  --paper:        #fafbfc;
+  --paper-sunk:   #f1f4f7;
+  --ink:          #12161c;
+  --ink-2:        #4d5560;
+  --ink-3:        #67717f;   /* 4.77:1 — labels are 10–11px, so AA small text applies */
+  --rule:         #e0e5ea;
+  --rule-strong:  #c6ced7;
+  --accent:       #1d4e89;   /* ink blue -- the blue-black of a written ledger */
+  --accent-wash:  rgba(29, 78, 137, 0.07);
+  --second:       #9a6212;   /* aged amber, used only for live state + index */
+  --row-hover:    rgba(18, 22, 28, 0.035);
 
   --display: "Spectral", "Iowan Old Style", Georgia, serif;
   --body:    "IBM Plex Sans", system-ui, -apple-system, sans-serif;
@@ -34,31 +35,33 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper:        #141110;
-    --paper-sunk:   #1c1817;
-    --ink:          #f2ede8;
-    --ink-2:        #b6ada6;
-    --ink-3:        #8a827c;
-    --rule:         #2e2825;
-    --rule-strong:  #453d38;
-    --accent:       #dd8171;
-    --accent-wash:  rgba(221, 129, 113, 0.10);
-    --row-hover:    rgba(242, 237, 232, 0.045);
+    --paper:        #101317;
+    --paper-sunk:   #171b21;
+    --ink:          #eef1f5;
+    --ink-2:        #a8b2be;
+    --ink-3:        #7c8794;
+    --rule:         #262c34;
+    --rule-strong:  #3a424c;
+    --accent:       #8ab4e8;
+    --accent-wash:  rgba(138, 180, 232, 0.11);
+    --second:       #d9a441;
+    --row-hover:    rgba(238, 241, 245, 0.05);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper:        #141110;
-  --paper-sunk:   #1c1817;
-  --ink:          #f2ede8;
-  --ink-2:        #b6ada6;
-  --ink-3:        #8a827c;
-  --rule:         #2e2825;
-  --rule-strong:  #453d38;
-  --accent:       #dd8171;
-  --accent-wash:  rgba(221, 129, 113, 0.10);
-  --row-hover:    rgba(242, 237, 232, 0.045);
+  --paper:        #101317;
+  --paper-sunk:   #171b21;
+  --ink:          #eef1f5;
+  --ink-2:        #a8b2be;
+  --ink-3:        #7c8794;
+  --rule:         #262c34;
+  --rule-strong:  #3a424c;
+  --accent:       #8ab4e8;
+  --accent-wash:  rgba(138, 180, 232, 0.11);
+  --second:       #d9a441;
+  --row-hover:    rgba(238, 241, 245, 0.05);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -116,7 +119,7 @@ a { color: inherit; }
   letter-spacing: 0.02em; text-decoration: none; color: var(--ink);
   display: inline-flex; align-items: baseline; gap: 9px;
 }
-.wordmark .rule-dot { color: var(--accent); }
+.wordmark .rule-dot { color: var(--second); }
 
 .masthead nav { margin-left: auto; display: flex; align-items: center; gap: 4px; }
 .masthead nav a {
@@ -150,13 +153,13 @@ a { color: inherit; }
 
 .hero h1 {
   font-family: var(--display);
-  font-size: clamp(29px, 3.9vw, 45px);
+  font-size: clamp(27px, 3.3vw, 39px);
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.018em;
+  line-height: 1.14;
+  letter-spacing: -0.016em;
   text-wrap: balance;
-  margin: 0 0 clamp(18px, 2.2vw, 24px);
-  max-width: 21ch;
+  margin: 0 0 clamp(16px, 2vw, 22px);
+  max-width: 26ch;
 }
 .hero h1 em {
   font-style: italic;
@@ -263,12 +266,13 @@ a { color: inherit; }
   text-transform: uppercase; color: var(--ink-3);
   padding-top: 6px; border-top: 2px solid var(--rule-strong);
 }
-.status.live { color: var(--accent); border-top-color: var(--accent); }
+.status.live { color: var(--second); border-top-color: var(--second); }
 
 .entry-index {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
   color: var(--ink-3); font-variant-numeric: tabular-nums;
 }
+.entry:first-child .entry-index { color: var(--second); }
 
 .entry h3 {
   font-family: var(--display); font-size: 18.5px;
