@@ -275,26 +275,29 @@ a { color: inherit; }
 /* ------------------------------------------------------------------ about */
 
 .about {
-  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 64px);
-  border-top: 1px solid var(--rule-strong); padding-top: clamp(28px, 4vw, 40px);
+  border-top: 1px solid var(--rule-strong);
+  padding-top: clamp(26px, 3.6vw, 36px);
 }
-@media (max-width: 780px) { .about { grid-template-columns: 1fr; } }
 
 .about p { margin: 0 0 16px; color: var(--ink-2); max-width: var(--measure); }
 .about p:first-child { margin-top: 0; }
 .about p strong { color: var(--ink); font-weight: 600; }
 .about p.opener {
-  font-family: var(--display); font-size: clamp(19px, 2vw, 22px);
-  color: var(--ink); line-height: 1.45; margin-bottom: 20px;
+  font-family: var(--display); font-size: clamp(21px, 2.5vw, 29px);
+  color: var(--ink); line-height: 1.35; margin: 0;
+  max-width: 36ch; letter-spacing: -0.014em; text-wrap: balance;
 }
 
-.record { margin: 0; }
+/* Full-width ruled rows: the same table language as the work grid. */
+.record { margin: clamp(26px, 3.4vw, 38px) 0 0; }
 .record div {
-  display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px;
-  padding: 11px 0; border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 20px;
+  padding: 13px 0; border-bottom: 1px solid var(--rule);
 }
-.record div:first-child { border-top: 1px solid var(--rule); }
+.record div:first-child { border-top: 1px solid var(--rule-strong); }
+@media (max-width: 560px) {
+  .record div { grid-template-columns: 1fr; gap: 3px; }
+}
 .record dt {
   font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-3); padding-top: 3px;
