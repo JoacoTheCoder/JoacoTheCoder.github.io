@@ -21,7 +21,7 @@
   --rule-strong:  #c6ced7;
   --accent:       #1d4e89;   /* ink blue -- the blue-black of a written ledger */
   --accent-wash:  rgba(29, 78, 137, 0.07);
-  --second:       #9a6212;   /* aged amber, used only for live state + index */
+  --second:       #0f6b60;   /* teal — hue 173°, so it can never read as red */
   --row-hover:    rgba(18, 22, 28, 0.035);
 
   --display: "Spectral", "Iowan Old Style", Georgia, serif;
@@ -44,7 +44,7 @@
     --rule-strong:  #3a424c;
     --accent:       #8ab4e8;
     --accent-wash:  rgba(138, 180, 232, 0.11);
-    --second:       #d9a441;
+    --second:       #57c4b2;
     --row-hover:    rgba(238, 241, 245, 0.05);
   }
 }
@@ -60,7 +60,7 @@
   --rule-strong:  #3a424c;
   --accent:       #8ab4e8;
   --accent-wash:  rgba(138, 180, 232, 0.11);
-  --second:       #d9a441;
+  --second:       #57c4b2;
   --row-hover:    rgba(238, 241, 245, 0.05);
 }
 
