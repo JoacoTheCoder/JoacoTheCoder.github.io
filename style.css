@@ -139,7 +139,7 @@ a { color: inherit; }
 
 /* -------------------------------------------------------------------- hero */
 
-.hero { padding: clamp(40px, 5.5vw, 66px) 0 0; }
+.hero { padding: clamp(44px, 5.6vw, 70px) 0 0; }
 
 .eyebrow {
   font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
@@ -158,7 +158,7 @@ a { color: inherit; }
   line-height: 1.14;
   letter-spacing: -0.016em;
   text-wrap: balance;
-  margin: 0 0 clamp(16px, 2vw, 22px);
+  margin: 0 0 clamp(10px, 1.4vw, 16px);
   max-width: 26ch;
 }
 .hero h1 em {
