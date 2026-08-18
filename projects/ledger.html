@@ -7,30 +7,34 @@
 <meta name="description" content="A self-hosted budget tracker on live bank data, and why transfer detection is the problem worth solving.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;1,600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav class="top">
-  <div class="wrap">
-    <a class="brand" href="../">joaquin&nbsp;heller</a>
-    <div class="links">
-      <a class="navlink" href="../#work">Work</a>
-      <a class="navlink" href="../#about">About</a>
-      <a class="navlink" href="../#contact">Contact</a>
-      <button class="theme-btn" id="theme" type="button">Theme</button>
-    </div>
+
+<header class="masthead">
+  <div class="shell">
+    <a class="wordmark" href="../">Joaquin Heller <span class="rule-dot">/</span> Boston</a>
+    <nav>
+      <a href="../#work">Work</a>
+      <a href="../#about">About</a>
+      <a href="../#contact">Contact</a>
+      <button class="theme-toggle" id="theme" type="button">Theme</button>
+    </nav>
   </div>
-</nav>
-<main id="main"><div class="wrap case">
+</header>
+
+<main id="main">
+<div class="shell article">
 <a class="back" href="../#work">← All work</a>
+
 <h1>LEDGER — where did the money actually go?</h1>
 <div class="meta">
-  <span class="tag">Node</span><span class="tag">Express</span>
-  <span class="tag">Plaid API</span><span class="tag">Vanilla JS</span>
+  <span>Node</span><span>Express</span>
+  <span>Plaid API</span><span>Vanilla JS</span>
 </div>
-<div class="case-body">
+<div class="prose">
 
 <h2>The problem</h2>
 <p>
@@ -123,16 +127,16 @@ savings rate = Saved ÷ Made          (debt principal excluded)</code></pre>
 </div>
 
 </div>
-</div></main>
-<footer class="site">
-  <div class="wrap">
+</div>
+</main>
+
+<footer class="colophon">
+  <div class="shell">
     <span>© <span id="year">2026</span> Joaquin Heller</span>
-    <span class="spacer"></span>
-    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
-    <a href="https://github.com/JoacoTheCoder">GitHub</a>
-    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+    <span class="push">Set in Spectral &amp; IBM Plex</span>
   </div>
 </footer>
+
 <script src="../main.js"></script>
 </body>
 </html>
