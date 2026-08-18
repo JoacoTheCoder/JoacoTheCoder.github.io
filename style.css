@@ -136,7 +136,7 @@ a { color: inherit; }
 
 /* -------------------------------------------------------------------- hero */
 
-.hero { padding: clamp(56px, 9vw, 104px) 0 0; }
+.hero { padding: clamp(40px, 5.5vw, 66px) 0 0; }
 
 .eyebrow {
   font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
@@ -150,13 +150,13 @@ a { color: inherit; }
 
 .hero h1 {
   font-family: var(--display);
-  font-size: clamp(38px, 6.4vw, 74px);
+  font-size: clamp(29px, 3.9vw, 45px);
   font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: -0.021em;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
   text-wrap: balance;
-  margin: 0 0 clamp(22px, 3vw, 34px);
-  max-width: 17ch;
+  margin: 0 0 clamp(18px, 2.2vw, 24px);
+  max-width: 21ch;
 }
 .hero h1 em {
   font-style: italic;
@@ -164,10 +164,10 @@ a { color: inherit; }
 }
 
 .hero-lede {
-  font-size: clamp(17px, 1.6vw, 19px);
+  font-size: 16.5px;
   color: var(--ink-2);
-  max-width: var(--measure);
-  margin: 0 0 18px;
+  max-width: 58ch;
+  margin: 0 0 15px;
 }
 .hero-lede strong { color: var(--ink); font-weight: 600; }
 
@@ -177,24 +177,24 @@ a { color: inherit; }
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   border-top: 1px solid var(--rule-strong);
   border-bottom: 1px solid var(--rule);
-  margin: clamp(38px, 5vw, 56px) 0 0;
+  margin: clamp(28px, 3.4vw, 38px) 0 0;
 }
 .summary-cell {
-  padding: 16px 20px 15px 0;
+  padding: 12px 18px 12px 0;
   border-right: 1px solid var(--rule);
   min-width: 0;
 }
 .summary-cell:last-child { border-right: 0; }
 .summary-cell dt {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px;
 }
 .summary-cell dd {
-  margin: 0; font-family: var(--display); font-size: 25px; font-weight: 600;
-  letter-spacing: -0.015em; font-variant-numeric: tabular-nums; line-height: 1.1;
+  margin: 0; font-family: var(--display); font-size: 19px; font-weight: 600;
+  letter-spacing: -0.012em; font-variant-numeric: tabular-nums; line-height: 1.15;
 }
 .summary-cell dd span {
-  font-family: var(--body); font-size: 13px; font-weight: 400;
+  font-family: var(--body); font-size: 12.5px; font-weight: 400;
   color: var(--ink-3); letter-spacing: 0; margin-left: 6px;
 }
 @media (max-width: 720px) {
@@ -210,7 +210,7 @@ a { color: inherit; }
 
 /* ---------------------------------------------------------------- sections */
 
-.band { padding: clamp(58px, 8vw, 96px) 0 0; }
+.band { padding: clamp(46px, 6vw, 70px) 0 0; }
 
 .band-head {
   display: flex; align-items: baseline; gap: 16px;
@@ -232,60 +232,70 @@ a { color: inherit; }
   margin: 0 0 clamp(26px, 4vw, 40px); font-size: 16px;
 }
 
-/* ------------------------------------------------------------- line items */
+/* ----------------------------------------------------------- project grid */
 
-.ledger { border-top: 1px solid var(--rule-strong); }
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);          /* the gap itself draws the rules */
+  border: 1px solid var(--rule);
+}
+@media (max-width: 900px) { .ledger { --cols: 2; } }
+@media (max-width: 600px) { .ledger { --cols: 1; } }
 
 .entry {
-  display: grid;
-  grid-template-columns: 154px minmax(0, 1fr);
-  gap: 0 36px;
-  padding: clamp(26px, 3.4vw, 38px) 0;
-  border-bottom: 1px solid var(--rule);
-  position: relative;
+  display: flex; flex-direction: column;
+  background: var(--paper);
+  padding: 20px 18px 18px;
+  min-width: 0; position: relative;
   transition: background-color 140ms ease;
 }
-.entry:hover { background: var(--row-hover); }
+.entry:hover { background: var(--paper-sunk); }
 
-.entry-rail { padding-top: 5px; }
+.entry-rail {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 16px;
+}
 
 .status {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
-  text-transform: uppercase; display: inline-block;
-  padding: 3px 0; color: var(--ink-3);
-  border-top: 2px solid var(--rule-strong);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--ink-3);
+  padding-top: 6px; border-top: 2px solid var(--rule-strong);
 }
 .status.live { color: var(--accent); border-top-color: var(--accent); }
 
-.entry-stack {
-  margin: 14px 0 0; padding: 0; list-style: none;
-  font-family: var(--mono); font-size: 11.5px; line-height: 1.85;
-  color: var(--ink-3);
+.entry-index {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  color: var(--ink-3); font-variant-numeric: tabular-nums;
 }
-
-.entry-main { min-width: 0; }
 
 .entry h3 {
-  font-family: var(--display); font-size: clamp(23px, 2.6vw, 30px);
-  font-weight: 600; letter-spacing: -0.018em; line-height: 1.15;
-  margin: 0 0 12px; text-wrap: balance;
+  font-family: var(--display); font-size: 18.5px;
+  font-weight: 600; letter-spacing: -0.015em; line-height: 1.2;
+  margin: 0 0 10px; text-wrap: balance;
 }
 .entry h3 a { text-decoration: none; }
-.entry h3 a::after {
-  content: ""; position: absolute; inset: 0;   /* the whole row is the target */
-}
+.entry h3 a::after { content: ""; position: absolute; inset: 0; }
 .entry:hover h3 a { color: var(--accent); }
 
 .entry p {
-  margin: 0 0 18px; color: var(--ink-2);
-  max-width: 58ch; font-size: 16px;
+  margin: 0 0 16px; color: var(--ink-2);
+  font-size: 14px; line-height: 1.6;
 }
 .entry p strong { color: var(--ink); font-weight: 600; }
 
+.entry-stack {
+  margin: auto 0 14px; padding: 12px 0 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+  font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+}
+
 .entry-links {
-  display: flex; flex-wrap: wrap; gap: 22px;
-  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.02em;
-  position: relative; z-index: 1;         /* stays clickable above the row link */
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.02em;
+  position: relative; z-index: 1;
 }
 .entry-links a {
   color: var(--ink-2); text-decoration: none;
@@ -293,12 +303,6 @@ a { color: inherit; }
 }
 .entry-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .entry-links a.lead { color: var(--accent); border-bottom-color: var(--accent); }
-
-@media (max-width: 720px) {
-  .entry { grid-template-columns: 1fr; gap: 0; }
-  .entry-rail { padding-top: 0; margin-bottom: 18px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
-  .entry-stack { margin-top: 0; display: flex; gap: 14px; flex-wrap: wrap; }
-}
 
 /* ------------------------------------------------------------------ about */
 

@@ -81,90 +81,73 @@
       <article class="entry">
         <div class="entry-rail">
           <span class="status live">Live</span>
-          <ul class="entry-stack">
-            <li>Python</li><li>SVG</li><li>Zero deps</li>
-          </ul>
+          <span class="entry-index">01</span>
         </div>
-        <div class="entry-main">
-          <h3><a href="projects/worldcup.html">World Cup 2026 — 308 Goals</a></h3>
-          <p>
-            The source feed gives you ten fields and goals as bare name-and-minute pairs.
-            I re-ran every match in order so each goal carries the score that existed the
-            moment it was struck — and that one derived column
-            <strong>inverted what I expected</strong>: late goals come overwhelmingly from
-            teams already ahead, not teams chasing.
-          </p>
-          <div class="entry-links">
-            <a class="lead" href="https://joacothecoder.github.io/worldcup-2026-dashboard/">Open the dashboard</a>
-            <a href="projects/worldcup.html">Case study</a>
-            <a href="https://github.com/JoacoTheCoder/worldcup-2026-dashboard">Source</a>
-          </div>
+        <h3><a href="projects/worldcup.html">World Cup 2026</a></h3>
+        <p>
+          The feed gives you ten fields and bare name-and-minute goals. I replayed every
+          match so each goal carries the score at the moment it was struck — and that
+          column <strong>inverted what I expected</strong>: late goals come from teams
+          already ahead, not teams chasing.
+        </p>
+        <ul class="entry-stack"><li>Python</li><li>SVG</li><li>Zero deps</li></ul>
+        <div class="entry-links">
+          <a class="lead" href="https://joacothecoder.github.io/worldcup-2026-dashboard/">Dashboard</a>
+          <a href="projects/worldcup.html">Case study</a>
+          <a href="https://github.com/JoacoTheCoder/worldcup-2026-dashboard">Source</a>
         </div>
       </article>
 
       <article class="entry">
         <div class="entry-rail">
           <span class="status">Case study</span>
-          <ul class="entry-stack">
-            <li>Node</li><li>Plaid API</li><li>Express</li>
-          </ul>
+          <span class="entry-index">02</span>
         </div>
-        <div class="entry-main">
-          <h3><a href="projects/ledger.html">LEDGER</a></h3>
-          <p>
-            A budget tracker running on my own bank accounts, entirely on my machine. The
-            problem worth solving was <strong>transfer detection</strong> — a credit card
-            payment appears twice in the raw data, once leaving checking and once arriving
-            on the card. Count it as both and every total is wrong in a way that still
-            looks plausible.
-          </p>
-          <div class="entry-links">
-            <a class="lead" href="projects/ledger.html">Read the case study</a>
-          </div>
+        <h3><a href="projects/ledger.html">LEDGER</a></h3>
+        <p>
+          A budget tracker on my own accounts, running entirely on my machine. The problem
+          worth solving was <strong>transfer detection</strong> — a card payment appears
+          twice in the raw data, and counting it as both makes every total wrong in a way
+          that still looks right.
+        </p>
+        <ul class="entry-stack"><li>Node</li><li>Plaid API</li><li>Express</li></ul>
+        <div class="entry-links">
+          <a class="lead" href="projects/ledger.html">Case study</a>
         </div>
       </article>
 
       <article class="entry">
         <div class="entry-rail">
           <span class="status">Case study</span>
-          <ul class="entry-stack">
-            <li>Python</li><li>EDGAR API</li><li>BeautifulSoup</li>
-          </ul>
+          <span class="entry-index">03</span>
         </div>
-        <div class="entry-main">
-          <h3><a href="projects/sec-board-data.html">SEC Filing Automation</a></h3>
-          <p>
-            Fund board data used to be collected by hand: find the right filing, find the
-            trustee table inside a few hundred pages, retype it. This reads EDGAR directly
-            and identifies the table by <strong>what it contains rather than where it
-            sits</strong> — including ruling out the compensation table, which looks almost
-            identical and gives you a clean, plausible, wrong answer.
-          </p>
-          <div class="entry-links">
-            <a class="lead" href="projects/sec-board-data.html">Read the case study</a>
-          </div>
+        <h3><a href="projects/sec-board-data.html">SEC Filing Automation</a></h3>
+        <p>
+          Board data used to mean finding a trustee table inside three hundred pages and
+          retyping it. This reads EDGAR directly and finds the table by
+          <strong>what it contains, not where it sits</strong> — including ruling out the
+          near-identical compensation table.
+        </p>
+        <ul class="entry-stack"><li>Python</li><li>EDGAR API</li><li>BeautifulSoup</li></ul>
+        <div class="entry-links">
+          <a class="lead" href="projects/sec-board-data.html">Case study</a>
         </div>
       </article>
 
       <article class="entry">
         <div class="entry-rail">
           <span class="status">Case study</span>
-          <ul class="entry-stack">
-            <li>Claude Code</li><li>Shell hooks</li><li>Team tooling</li>
-          </ul>
+          <span class="entry-index">04</span>
         </div>
-        <div class="entry-main">
-          <h3><a href="projects/ai-workspace.html">AI Workspace Architecture</a></h3>
-          <p>
-            Plenty of people use AI at work. Fewer have built the setup their coworkers
-            use. Shared context files, project templates, and a hook that writes memory
-            at the end of a session — because <strong>the moment you'd write it down is
-            the moment you're finished and moving on</strong>, so it can't depend on
-            anyone remembering.
-          </p>
-          <div class="entry-links">
-            <a class="lead" href="projects/ai-workspace.html">Read the case study</a>
-          </div>
+        <h3><a href="projects/ai-workspace.html">AI Workspace Architecture</a></h3>
+        <p>
+          Plenty of people use AI at work; fewer have built the setup their coworkers use.
+          Shared context, project templates, and a hook that writes memory at session end —
+          because <strong>it can't depend on anyone remembering</strong>.
+        </p>
+        <ul class="entry-stack"><li>Claude Code</li><li>Shell hooks</li><li>Team tooling</li></ul>
+        <div class="entry-links">
+          <a class="lead" href="projects/ai-workspace.html">Case study</a>
         </div>
       </article>
 
