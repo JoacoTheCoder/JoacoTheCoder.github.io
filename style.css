@@ -153,13 +153,14 @@ a { color: inherit; }
 
 .hero h1 {
   font-family: var(--display);
-  font-size: clamp(27px, 3.3vw, 39px);
+  /* Sized to span the full measure on one line rather than wrap early. */
+  font-size: clamp(26px, 4.7vw, 59px);
   font-weight: 600;
-  line-height: 1.14;
-  letter-spacing: -0.016em;
+  line-height: 1.1;
+  letter-spacing: -0.021em;
   text-wrap: balance;
   margin: 0 0 clamp(10px, 1.4vw, 16px);
-  max-width: 40ch;
+  max-width: none;
 }
 .hero h1 em {
   font-style: italic;
