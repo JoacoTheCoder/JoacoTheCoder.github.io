@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEDGER — Joaquin Heller</title>
+<meta name="description" content="A self-hosted budget tracker on live bank data, and why transfer detection is the problem worth solving.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="../">joaquin&nbsp;heller</a>
+    <div class="links">
+      <a class="navlink" href="../#work">Work</a>
+      <a class="navlink" href="../#about">About</a>
+      <a class="navlink" href="../#contact">Contact</a>
+      <button class="theme-btn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</nav>
+<main id="main"><div class="wrap case">
+<a class="back" href="../#work">← All work</a>
+<h1>LEDGER — where did the money actually go?</h1>
+<div class="meta">
+  <span class="tag">Node</span><span class="tag">Express</span>
+  <span class="tag">Plaid API</span><span class="tag">Vanilla JS</span>
+</div>
+<div class="case-body">
+
+<h2>The problem</h2>
+<p>
+  I wanted budget-vs-actual for my own money, across checking and credit cards, without
+  paying a subscription or handing my bank credentials to someone else's cloud. The
+  existing options were paid, hosted, or didn't let me control categorization the way I
+  wanted. So it runs on my machine, and the data never leaves it.
+</p>
+
+<h2>What it does</h2>
+<ul>
+  <li>Syncs live transactions from multiple accounts through the Plaid API</li>
+  <li>Monthly dashboard: income, spend, savings rate, budget-vs-actual, category breakdown</li>
+  <li>Re-categorize any transaction inline, and it remembers that choice permanently</li>
+  <li>Per-account rules that apply retroactively, with a preview before you commit them</li>
+  <li>Everything on disk locally — no cloud, no account, no third party</li>
+</ul>
+
+<h2>The engineering worth talking about</h2>
+
+<h3>Transfer detection</h3>
+<p>
+  In Plaid, a credit card payment appears twice: as money leaving checking, and as money
+  arriving on the card. Sum those naively and you've counted a payment as both an expense
+  and income. Every total downstream is then wrong, and it's wrong in a way that looks
+  plausible — which is worse.
+</p>
+<p>
+  The server tags these using keyword matching (<code>payment</code>, <code>autopay</code>,
+  <code>ACH</code>, <code>transfer</code>) alongside Plaid's own category signals. Tagged
+  transfers stay <em>visible</em> in the transaction list — you should be able to see your
+  own money moving — but they're <em>excluded</em> from every income and expense
+  calculation. Most budget tools get this wrong.
+</p>
+
+<h3>Deriving the money model from groups, not categories</h3>
+<p>
+  The version I actually use went further. Every category belongs to a group, and all the
+  arithmetic derives from the group rather than from category IDs:
+</p>
+<pre><code>Made  = income group
+Spent = bills + variable + debt      (a loan payment is money gone)
+Saved = savings group, net of inbound
+Left  = Made − Spent − Saved
+
+savings rate = Saved ÷ Made          (debt principal excluded)</code></pre>
+<p>
+  Credit-card payments stay classified as transfers and stay deliberately neutral — the
+  purchases were already counted when they were charged. Money arriving into a spending
+  category is a refund, and reduces that category rather than counting as income. Getting
+  these rules explicit is what made the savings-rate number trustworthy.
+</p>
+
+<h3>Debugging a UI you can't unit test</h3>
+<p>
+  Several bugs here were invisible to unit-level checks and only showed up when the thing
+  was actually rendered. I ended up driving the app with headless Chrome against a copy of
+  the frontend and screenshotting the result. That caught:
+</p>
+<ul>
+  <li>A 100kb <code>express.json</code> limit silently breaking CSV export</li>
+  <li>A goal line painting <em>behind</em> its own bars</li>
+  <li>Date ranges ending at midnight while transactions parsed at noon — which quietly
+  dropped the last day of every month</li>
+  <li>A formatter stripping the minus sign, so a savings <em>withdrawal</em> rendered as a deposit</li>
+</ul>
+<p>
+  That last one is the reason I don't trust a number I haven't seen rendered.
+</p>
+
+<h3>Demo mode</h3>
+<p>
+  The portfolio build never instantiates a Plaid client unless real credentials exist. With
+  <code>DEMO_MODE=true</code> the same server serves a synthetic fixture — three accounts,
+  forty transactions, including deliberate transfer pairs so the detection logic is visible
+  — so the whole app runs with zero setup and zero real data.
+</p>
+
+<h2>Scope</h2>
+<p>
+  Cash flow only: checking and credit cards. Retirement and investment accounts are
+  deliberately out — that's a net-worth problem, and mixing the two produces a number that
+  answers neither question.
+</p>
+
+<div class="note">
+  <p><strong>On the demo:</strong> the live version runs on my actual accounts and never
+  gets published. A demo build on synthetic data is being prepared from the current code —
+  the link will appear here when it's up. I'm happy to walk through the real thing on a call.</p>
+</div>
+
+</div>
+</div></main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Joaquin Heller</span>
+    <span class="spacer"></span>
+    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
+    <a href="https://github.com/JoacoTheCoder">GitHub</a>
+    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+  </div>
+</footer>
+<script src="../main.js"></script>
+</body>
+</html>

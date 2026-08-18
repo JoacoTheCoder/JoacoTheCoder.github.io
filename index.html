@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joaquin Heller — Data & Analytics</title>
+<meta name="description" content="Financial analyst in Boston. SQL, Python, and data pipelines — plus the dashboards and automation built on top of them.">
+<meta property="og:title" content="Joaquin Heller — Data & Analytics">
+<meta property="og:description" content="Financial analyst in Boston. SQL, Python, and data pipelines — plus the dashboards and automation built on top of them.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="/">joaquin&nbsp;heller</a>
+    <div class="links">
+      <a class="navlink" href="#work">Work</a>
+      <a class="navlink" href="#about">About</a>
+      <a class="navlink" href="#contact">Contact</a>
+      <button class="theme-btn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Boston, MA</p>
+    <h1>I build the pipeline, then the thing that reads it.</h1>
+    <p class="lede">
+      I'm a financial analyst at Fuse Research Network, working in SQL Server and
+      Morningstar data every day. The projects here are the ones I built on my own time —
+      a tournament dataset with the analysis columns derived from scratch, a personal
+      finance app running on live bank data, and an automation that reads SEC filings so
+      nobody has to copy them by hand.
+    </p>
+    <p class="lede">
+      Most of them started because I wanted the answer to something and the data
+      wasn't in a usable shape yet.
+    </p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#work">See the work</a>
+      <a class="btn" href="#contact">Get in touch</a>
+    </div>
+  </header>
+
+  <section id="work">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <p>Four projects. Two you can open and click through right now; two are written up because the code isn't mine to publish.</p>
+    </div>
+
+    <div class="projects">
+
+      <article class="project">
+        <div class="project-top">
+          <h3><a href="projects/worldcup.html">World Cup 2026 — 308 Goals</a></h3>
+          <span class="badge">Live dashboard</span>
+        </div>
+        <p class="hook">
+          Every goal of the tournament, re-run in chronological order so each one carries the
+          score that existed the moment it was struck. That derived column answers what the raw
+          results can't — and it <strong>inverts the obvious guess</strong>: late goals come
+          overwhelmingly from teams already ahead, not teams chasing.
+        </p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">SVG</span>
+          <span class="tag">Data pipeline</span><span class="tag">No dependencies</span>
+        </div>
+        <div class="project-links">
+          <a class="strong" href="https://joacothecoder.github.io/worldcup-2026-dashboard/">Open the dashboard →</a>
+          <a href="projects/worldcup.html">Case study</a>
+          <a href="https://github.com/JoacoTheCoder/worldcup-2026-dashboard">Code</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-top">
+          <h3><a href="projects/ledger.html">LEDGER</a></h3>
+          <span class="badge quiet">Case study</span>
+        </div>
+        <p class="hook">
+          A self-hosted alternative to Mint, running on my own bank accounts through Plaid.
+          The engineering problem worth solving was <strong>transfer detection</strong> —
+          money moving between your own accounts is not income and not spending, and counting
+          it as either makes every number wrong.
+        </p>
+        <div class="tags">
+          <span class="tag">Node</span><span class="tag">Express</span>
+          <span class="tag">Plaid API</span><span class="tag">Vanilla JS</span>
+        </div>
+        <div class="project-links">
+          <a class="strong" href="projects/ledger.html">Read the case study →</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-top">
+          <h3><a href="projects/sec-board-data.html">SEC Filing Automation</a></h3>
+          <span class="badge quiet">Write-up only</span>
+        </div>
+        <p class="hook">
+          Fund board data used to be collected by hand: find the right filing, find the
+          trustee table inside a few hundred pages of prospectus, retype it. This reads
+          EDGAR directly, picks the correct filing, locates the table in unstructured HTML,
+          and loads it — so the analyst work goes back to being analysis.
+        </p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">SEC EDGAR API</span>
+          <span class="tag">BeautifulSoup</span><span class="tag">pandas</span>
+        </div>
+        <div class="project-links">
+          <a class="strong" href="projects/sec-board-data.html">Read the case study →</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-top">
+          <h3><a href="projects/ai-workspace.html">AI Workspace Architecture</a></h3>
+          <span class="badge quiet">Write-up only</span>
+        </div>
+        <p class="hook">
+          Everyone says they use AI at work. Fewer people have set up the thing their
+          coworkers use. I built a shared workspace convention — inherited context files,
+          project templates, and a hook that writes memory automatically at the end of a
+          session, so the next one starts informed instead of blank.
+        </p>
+        <div class="tags">
+          <span class="tag">Claude Code</span><span class="tag">Shell hooks</span>
+          <span class="tag">Team tooling</span>
+        </div>
+        <div class="project-links">
+          <a class="strong" href="projects/ai-workspace.html">Read the case study →</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-head"><h2>About</h2></div>
+    <div class="about-grid">
+      <div>
+        <p>
+          I studied Marketing and Business Analytics at Suffolk University and went
+          straight into fund data. Day to day that means SQL Server, Excel, and
+          Morningstar — building reports, maintaining databases, and answering questions
+          about how funds are actually performing.
+        </p>
+        <p>
+          What I like is the part before the report: getting data into a shape where the
+          question becomes answerable. <strong>Most of the projects here are that same
+          instinct applied to something I was curious about</strong> — a tournament, my own
+          spending, a filing nobody wanted to read.
+        </p>
+        <p>
+          Outside work I run marathons, play guitar, and was an NCAA athlete at Suffolk.
+          I'm always interested in talking to people building something.
+        </p>
+      </div>
+      <dl class="facts">
+        <div class="fact">
+          <dt>Currently</dt>
+          <dd>Financial Analyst, Fuse Research Network</dd>
+        </div>
+        <div class="fact">
+          <dt>Daily tools</dt>
+          <dd>SQL Server, Excel, Python</dd>
+        </div>
+        <div class="fact">
+          <dt>Also used</dt>
+          <dd>Tableau, Power BI, RStudio, SPSS</dd>
+        </div>
+        <div class="fact">
+          <dt>Education</dt>
+          <dd>Suffolk University — Marketing &amp; Business Analytics, 3.75 GPA</dd>
+        </div>
+        <div class="fact">
+          <dt>Based in</dt>
+          <dd>Boston, MA</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-head"><h2>Contact</h2></div>
+    <div class="cta">
+      <h3>Let's talk</h3>
+      <p>
+        If you're hiring, or you just want to compare notes on something here, the
+        fastest way is email. Happy to walk through any of these projects in detail,
+        and to send a résumé over.
+      </p>
+      <div class="cta-actions">
+        <a class="btn primary" href="mailto:joaquin.heller30@gmail.com">Email me</a>
+        <a class="btn" href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+        <a class="btn" href="https://github.com/JoacoTheCoder">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Joaquin Heller</span>
+    <span class="spacer"></span>
+    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
+    <a href="https://github.com/JoacoTheCoder">GitHub</a>
+    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

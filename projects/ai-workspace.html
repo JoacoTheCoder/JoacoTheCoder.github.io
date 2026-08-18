@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Workspace Architecture — Joaquin Heller</title>
+<meta name="description" content="Setting up a shared AI workspace a team can actually use — inherited context, per-project agents, and memory that writes itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="../">joaquin&nbsp;heller</a>
+    <div class="links">
+      <a class="navlink" href="../#work">Work</a>
+      <a class="navlink" href="../#about">About</a>
+      <a class="navlink" href="../#contact">Contact</a>
+      <button class="theme-btn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</nav>
+<main id="main"><div class="wrap case">
+<a class="back" href="../#work">← All work</a>
+
+<h1>Making AI tooling something a team can actually share</h1>
+<div class="meta">
+  <span class="tag">Claude Code</span><span class="tag">Shell hooks</span>
+  <span class="tag">Team tooling</span><span class="tag">Documentation</span>
+</div>
+<div class="case-body">
+
+<div class="note">
+  <p><strong>Written up, not published.</strong> Part of this was built for a team at work, so
+  the specifics — projects, drive layout, internal names — are left out. The pattern is
+  transferable and it's the pattern that's mine.</p>
+</div>
+
+<h2>The problem nobody calls a problem</h2>
+<p>
+  Individual people were getting real value out of AI tooling. None of it was shared. Each
+  person's setup lived on their own machine, every session started from nothing, and
+  whatever had been worked out last week — how a dataset is shaped, why a job is run a
+  particular way — had to be explained again from scratch.
+</p>
+<p>
+  The tooling wasn't the bottleneck. Context was. Which makes it an organizational problem
+  wearing a technical costume.
+</p>
+
+<h2>The finding that shaped everything</h2>
+<div class="callout">
+  <p>Only the context file inherits by walking up the directory tree. Settings, skills, and
+  hooks <strong>do not</strong> inherit from parent folders — they load from the folder you
+  actually start in.</p>
+</div>
+<p>
+  That single fact decides the whole layout, and getting it backwards is the most common way
+  these setups quietly fail. Put a configuration at the workspace root expecting it to reach
+  everything below and it silently does nothing, because sessions get launched from project
+  folders. We'd had a workspace-level config directory doing exactly that — it was retired
+  once it was clear it served no purpose.
+</p>
+<p>So the structure follows the inheritance rules rather than fighting them:</p>
+<pre><code>workspace/
+├── CLAUDE.md              inherited everywhere — shared conventions only
+├── _start-here/           onboarding + a catalog of every project
+├── _templates/
+│   └── new-project/       CLAUDE.md · SETUP.md · config/.env.template
+└── projects/
+    └── &lt;project&gt;/
+        ├── CLAUDE.md      project context, layered on the root
+        ├── .claude/
+        │   ├── settings.json    permissions — shared, not personal
+        │   └── skills/          load only when opened HERE
+        └── config/.env          credentials stay put, never synced</code></pre>
+<p>
+  Agents run from their own folder, never the workspace root. That's the only place their
+  settings and skills load.
+</p>
+
+<h2>Memory that doesn't depend on anyone remembering</h2>
+<p>
+  The part I'd point to first. A session ends and everything worked out during it evaporates
+  unless someone writes it down — and nobody writes it down, because the moment you'd do it
+  is the moment you're finished and moving on.
+</p>
+<p>
+  So it's a hook, not a habit. At the end of any session, before the process is allowed to
+  stop, it checks whether real work happened and prompts the memory files to be updated:
+</p>
+<pre><code>read the session payload
+if already handling a stop  → exit          # loop guard
+if no memory store found    → exit quietly  # stay silent elsewhere
+otherwise → block the stop, with a reason naming what to update</code></pre>
+<p>
+  Three details make it survivable rather than annoying. The <strong>loop guard</strong>,
+  because a hook that fires on the stop it caused never terminates. <strong>Silence where it
+  doesn't apply</strong>, so it doesn't nag in unrelated folders. And <strong>pure Q&amp;A
+  sessions stop normally</strong> — if nothing changed, there's nothing to write. A tool
+  that cries wolf gets disabled in a week.
+</p>
+<p>
+  It has to be user-level, which means it doesn't travel with the shared folder. That's a
+  real limitation, so the fix is documentation: a setup page a new teammate follows once,
+  written for someone who has never opened the config file before.
+</p>
+
+<h2>The unglamorous half</h2>
+<p>
+  Most of the work wasn't the hook. It was the things that decide whether anyone else can
+  actually use this:
+</p>
+<ul>
+  <li><strong>Directional sync, never blanket overwrite.</strong> Each project was compared
+  and moved in the direction that was actually newer. One project's live copy was already on
+  the share and a stale local copy would have clobbered it — a one-way "sync everything"
+  would have destroyed real work.</li>
+  <li><strong>Portability.</strong> Personal config files with hardcoded local paths were
+  removed, and the reusable permissions promoted into each project's shared settings. A
+  config that only works on the machine it was written on isn't shared tooling.</li>
+  <li><strong>A project template.</strong> A skeleton with the context file, setup notes, and
+  a credentials template already in place, so a new project starts correct instead of
+  starting empty.</li>
+  <li><strong>A catalog.</strong> One page listing every project and what it does. Obvious,
+  and the thing most likely to be skipped.</li>
+  <li><strong>Credentials stay put.</strong> Each project holds its own local environment
+  file, and it's never synced anywhere.</li>
+</ul>
+
+<h2>The same idea, built again cleanly</h2>
+<p>
+  I rebuilt the pattern for my own machine afterwards, which was the useful test — the
+  second attempt is where you find out which parts were load-bearing.
+</p>
+<p>
+  It's a different mechanism for the same function. On my own setup, recall is keyed to the
+  directory a session starts in, while the hook that writes memory isn't keyed to anything.
+  A hook alone would write memory everywhere and only be able to read it from one place. So
+  it's two pieces: the hook handles writing, and a context file at the top of the home
+  directory — the one thing that does inherit everywhere — handles reading. Same outcome,
+  arrived at from the constraints of a different platform.
+</p>
+
+<h2>What I'd tell someone starting this</h2>
+<ul>
+  <li>Find out what actually inherits before you design the folder structure. Everything else
+  follows from it.</li>
+  <li>Automate the step people skip, not the step people enjoy.</li>
+  <li>A convention only works if a teammate can follow it without being told twice — which
+  means the onboarding page is part of the build, not paperwork afterwards.</li>
+  <li>Never sync in both directions at once.</li>
+</ul>
+
+<div class="note">
+  <p><strong>Still to add:</strong> the concrete folder structure from the team workspace, and
+  a real outcome — onboarding time, or work that stopped being redone.</p>
+</div>
+
+</div>
+</div></main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Joaquin Heller</span>
+    <span class="spacer"></span>
+    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
+    <a href="https://github.com/JoacoTheCoder">GitHub</a>
+    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+  </div>
+</footer>
+<script src="../main.js"></script>
+</body>
+</html>

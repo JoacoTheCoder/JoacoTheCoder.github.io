@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Cup 2026 — 308 Goals — Joaquin Heller</title>
+<meta name="description" content="Deriving score-state-at-time-of-goal from a thin public feed, and what it revealed about late goals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="../">joaquin&nbsp;heller</a>
+    <div class="links">
+      <a class="navlink" href="../#work">Work</a>
+      <a class="navlink" href="../#about">About</a>
+      <a class="navlink" href="../#contact">Contact</a>
+      <button class="theme-btn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</nav>
+<main id="main"><div class="wrap case">
+<a class="back" href="../#work">← All work</a>
+<h1>308 goals, and the column that made them interesting</h1>
+<div class="meta">
+  <span class="tag">Python</span><span class="tag">Hand-rolled SVG</span>
+  <span class="tag">Data pipeline</span><span class="tag">Zero dependencies</span>
+</div>
+<div class="case-body">
+
+<p><a href="https://joacothecoder.github.io/worldcup-2026-dashboard/"><strong>Open the live dashboard →</strong></a> &nbsp;·&nbsp; <a href="https://github.com/JoacoTheCoder/worldcup-2026-dashboard">Code on GitHub</a></p>
+
+<figure>
+  <img src="../assets/worldcup.png" alt="The World Cup 2026 dashboard, showing a diverging bar chart of goals by score state across the match.">
+</figure>
+
+<h2>Why I built it</h2>
+<p>
+  I saw a World Cup dashboard on LinkedIn and realised I had no data visualization work
+  of my own. I'm comfortable in SQL and in getting data into shape; I had almost nothing
+  to show for the part where someone else reads it. So I built one — and made the
+  derivation, not the charts, the actual project.
+</p>
+
+<h2>The source is thin on purpose</h2>
+<p>
+  The feed is public domain and complete, which is the good news. It is also ten fields
+  per match, with goals as bare <code>{name, minute}</code> objects:
+</p>
+<pre><code>{
+  "round": "Matchday 1",
+  "date": "2026-06-11",
+  "time": "13:00 UTC-6",
+  "team1": "Mexico", "team2": "South Africa",
+  "score": { "ft": [2, 0], "ht": [1, 0] },
+  "goals1": [{ "name": "Julián Quiñones", "minute": "9" }],
+  "goals2": [],
+  "group": "Group A",
+  "ground": "Mexico City"
+}</code></pre>
+<p class="caption">One match, as the feed gives it to you.</p>
+<p>
+  Chart that directly and you get what everyone gets: goals per team, goals per minute.
+  The questions I actually wanted — do trailing teams push late, does the first goal
+  decide the match, did the roofed stadiums play differently — need columns that don't
+  exist yet.
+</p>
+
+<h2>Score state: replaying the match</h2>
+<p>
+  The one that carries the project. Every goal is re-run in chronological order and
+  stamped with the score that existed the moment before it was struck:
+</p>
+<pre><code>running = [0, 0]
+for event in sorted(events, key=lambda e: e["order"]):
+    before_for     = running[event["side"] - 1]
+    before_against = running[2 - event["side"]]
+    event["score_state"] = ("Leading"  if before_for &gt;  before_against else
+                            "Level"    if before_for == before_against else
+                            "Trailing")
+    running[event["side"] - 1] += 1</code></pre>
+<p>
+  It's a windowed state calculation over an ordered event stream — the same shape as a
+  running total in SQL. It turns a flat list of goals into something you can interrogate.
+</p>
+
+<div class="callout">
+  <p><strong>The finding inverts the obvious guess.</strong> From the 85th minute on, 45% of
+  goals were scored by a team <em>already ahead</em> and only 22% by a team behind — against
+  34% leading across the match as a whole. Teams chasing a game push players forward, and
+  the team in front punishes the space they leave.</p>
+</div>
+<p>
+  I expected the opposite. That's the point of deriving the column instead of assuming
+  the answer.
+</p>
+
+<h2>Three traps in the data</h2>
+
+<h3>1. <code>ft</code> is not the final score</h3>
+<p>
+  It's the score after 90 minutes. Five matches went to extra time and four of those to
+  penalties, so anything keyed on <code>ft</code> alone calls the wrong winner — including
+  both quarter-finals that went long. Precedence has to be shootout, then extra time, then
+  regulation. Belgium–Senegal reads <code>ft [2,2]</code> and finished 3–2.
+</p>
+
+<h3>2. Own goals are credited to the beneficiary</h3>
+<p>
+  Miro Muheim is Swiss but appears under <code>goals1</code> of <em>Qatar v Switzerland</em>.
+  So the team credit is already right — but the <em>player</em> played for the other side.
+  Attribute the goal to his listed team and you misassign 14 goals in every player-level
+  cut. The pipeline carries <code>team</code> and <code>scorer_team</code> as separate columns.
+</p>
+
+<h3>3. Stoppage time is not the minute it follows</h3>
+<p>
+  <code>"90+4"</code> has to sort after the 90th minute and before the 91st, and must never
+  collapse into <code>90</code> — a stoppage-time winner is a different event from a
+  90th-minute one. Parsed as <code>(base, stoppage, base + stoppage/1000)</code>.
+</p>
+
+<h2>Validation, because a silent break is the real risk</h2>
+<p>
+  The pipeline refuses to write anything until fifteen assertions pass. Five check against
+  facts published elsewhere, so an upstream change can't slip through unnoticed:
+</p>
+<pre><code>[ok] matches                          104
+[ok] goals                            308
+[ok] golden boot scorer               Kylian Mbappé
+[ok] France goals                     20
+[ok] champion                         Spain
+[ok] goals reconcile to match totals  308</code></pre>
+<p>
+  Plus a per-match reconciliation: the flattened goal list has to reproduce every scoreline
+  exactly or the build fails naming the match. That check is what <em>confirmed</em> the
+  own-goal behaviour above — if my reading had been wrong, 14 matches would not have
+  reconciled.
+</p>
+
+<h2>Choices I'd defend</h2>
+<ul>
+  <li><strong>Standard library only.</strong> No pandas, no venv, no wheels to fail on a new
+  interpreter. It runs on any Python 3 on any machine, today and in two years.</li>
+  <li><strong>No charting library.</strong> The charts are hand-written SVG. That sounds like
+  extra work until you try to make a library produce 2px gaps between stacked segments and
+  rounded ends only at the data end. It also means no CDN, so the page works offline.</li>
+  <li><strong>The colours were validated, not chosen.</strong> The palette was run through a
+  colourblind-separation check in both light and dark modes rather than eyeballed. Score
+  state is encoded as diverging — trailing and leading are opposite poles — because it's
+  polarity, not identity.</li>
+  <li><strong>The raw feed is committed.</strong> The build reproduces byte-for-byte even if
+  upstream changes.</li>
+</ul>
+
+<h2>What I'd do next</h2>
+<p>
+  Player positions would open up a lot — whether defenders scored more from set pieces late,
+  for one — but that needs a 300-plus player lookup that doesn't exist in any free source.
+  The honest version of this project stops where the data stops.
+</p>
+
+</div>
+</div></main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Joaquin Heller</span>
+    <span class="spacer"></span>
+    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
+    <a href="https://github.com/JoacoTheCoder">GitHub</a>
+    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+  </div>
+</footer>
+<script src="../main.js"></script>
+</body>
+</html>

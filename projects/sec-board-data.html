@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEC Filing Automation — Joaquin Heller</title>
+<meta name="description" content="Reading fund board data straight out of EDGAR filings, so nobody has to retype it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="../">joaquin&nbsp;heller</a>
+    <div class="links">
+      <a class="navlink" href="../#work">Work</a>
+      <a class="navlink" href="../#about">About</a>
+      <a class="navlink" href="../#contact">Contact</a>
+      <button class="theme-btn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</nav>
+<main id="main"><div class="wrap case">
+<a class="back" href="../#work">← All work</a>
+<h1>Getting board data out of a 300-page filing</h1>
+<div class="meta">
+  <span class="tag">Python</span><span class="tag">SEC EDGAR API</span>
+  <span class="tag">BeautifulSoup</span><span class="tag">pandas</span>
+</div>
+<div class="case-body">
+
+<div class="note">
+  <p><strong>Written up, not published.</strong> This was built at work, so there's no repo
+  and no complete pipeline here — the snippets below are illustrative, and every path,
+  identifier and internal detail has been stripped. EDGAR itself is a public government API;
+  nothing about querying it is proprietary. Happy to talk through the approach.</p>
+</div>
+
+<h2>The manual process it replaced</h2>
+<p>
+  Fund board data — who the independent directors are, when they joined, how many portfolios
+  they oversee — lives inside registration filings. Collecting it meant: find the fund's
+  most recent filing of the right type, open a document that can run several hundred pages,
+  scroll to the trustee section, find the right table among dozens, and retype it.
+</p>
+<p>
+  Per fund. Repeatedly. It's the kind of work that is both tedious and easy to get subtly
+  wrong, which is the worst combination.
+</p>
+
+<h2>Step one: find the correct filing</h2>
+<p>
+  EDGAR exposes a submissions endpoint per company. The filing type matters — you want the
+  post-effective amendment that carries the current prospectus, not whatever was filed most
+  recently — and the CIK has to be zero-padded to ten digits or the request just fails.
+</p>
+<pre><code>cik_padded = cik.zfill(10)          # SEC requires 10 digits
+url  = f"https://data.sec.gov/submissions/CIK{cik_padded}.json"
+data = requests.get(url, headers=headers).json()
+
+recent   = pd.DataFrame(data["filings"]["recent"])
+filtered = recent[recent["form"] == "485BPOS"].copy()</code></pre>
+<p class="caption">Identify the right filings, then build document URLs from the accession numbers.</p>
+<p>
+  SEC also requires a descriptive <code>User-Agent</code> identifying who is making the
+  request, and rate-limits accordingly. Ignoring that gets you blocked, and it's the first
+  thing people miss.
+</p>
+
+<h2>Step two: the actual hard part</h2>
+<p>
+  Downloading the filing is easy. Finding the trustee table inside it is not. These
+  documents have no consistent structure — the section is titled differently by different
+  fund families, the table sits among dozens of unrelated ones, and there is no ID or class
+  to anchor on.
+</p>
+<p>So the approach is to recognise the table by what it contains rather than where it sits:</p>
+<pre><code>SECTION_ANCHORS = [
+    "management of the trust",
+    "trustees and officers",
+    "information about the trustees",
+    "board composition and leadership",
+    # ...several more phrasings seen in practice
+]
+
+def is_trustee_bio_table(text):
+    t = text.lower()
+    is_bio  = ("trustee" in t and "since" in t and has_year(text)) \
+              or ("fund complex" in t and "range" not in t)
+    is_comp = "compensation" in t or "remuneration" in t
+    return is_bio and not is_comp        # bios, not the compensation table</code></pre>
+<p class="caption">Content-based identification. The exclusion is as important as the match.</p>
+<p>
+  That last line is the one earned by trial and error. Compensation tables look almost
+  identical to biography tables — same trustee names, same structure — and pulling the wrong
+  one gives you a clean, plausible, entirely incorrect result. Explicitly ruling it out was
+  the difference between something demonstrable and something dependable.
+</p>
+<p>
+  The rest is a stack of similar defences: a proximity window so a section heading only
+  claims tables near it, patterns for page numbers and running headers, stop-patterns for
+  where the trustee section ends, near-duplicate detection for tables repeated across the
+  document, and name cleaning that strips birth years and dates out of a name cell.
+</p>
+
+<h2>What made it work</h2>
+<p>
+  Not any single clever step. It was accepting that the input is genuinely unstructured and
+  that every heuristic would meet a filing that broke it — so each one needed a fallback and
+  an explicit stopping condition rather than an assumption. The failure mode I cared most
+  about was silent success: returning a table that looks right and isn't.
+</p>
+
+<h2>The result</h2>
+<p>
+  Board data that used to be collected by hand now gets pulled, parsed and loaded
+  automatically. The analyst time goes back to the part that needs an analyst — checking
+  what the data says — instead of retyping it out of a PDF-shaped web page.
+</p>
+
+<div class="note">
+  <p><strong>Note to self, still open:</strong> quantify this properly — hours saved per
+  refresh cycle, and error rate before versus after.</p>
+</div>
+
+</div>
+</div></main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Joaquin Heller</span>
+    <span class="spacer"></span>
+    <a href="mailto:joaquin.heller30@gmail.com">Email</a>
+    <a href="https://github.com/JoacoTheCoder">GitHub</a>
+    <a href="https://www.linkedin.com/in/joaquin-heller/">LinkedIn</a>
+  </div>
+</footer>
+<script src="../main.js"></script>
+</body>
+</html>
