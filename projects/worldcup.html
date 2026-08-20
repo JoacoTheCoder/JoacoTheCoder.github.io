@@ -29,18 +29,29 @@
 <div class="shell article">
 <a class="back" href="../#work">← All work</a>
 
-<h1>308 goals, and the column that made them interesting</h1>
+<h1>308 goals, and the columns that made them interesting</h1>
 <div class="meta">
   <span>Python</span><span>Hand-rolled SVG</span>
-  <span>Data pipeline</span><span>Zero dependencies</span>
+  <span>Data pipeline</span><span>Zero dependencies</span><span>Joined sources</span>
 </div>
 <div class="prose">
 
 <p><a href="https://joacothecoder.github.io/worldcup-2026-dashboard/"><strong>Open the live dashboard →</strong></a> &nbsp;·&nbsp; <a href="https://github.com/JoacoTheCoder/worldcup-2026-dashboard">Code on GitHub</a></p>
 
 <figure>
-  <img src="../assets/worldcup.png" alt="The World Cup 2026 dashboard, showing a diverging bar chart of goals by score state across the match.">
+  <img src="../assets/worldcup.png" alt="The World Cup 2026 dashboard: a sidebar app showing goals by minute, KPI tiles and a cumulative goal curve.">
 </figure>
+
+<h2>What it does now</h2>
+<p>
+  Four views behind a sidebar. <strong>Overview</strong> covers when goals were scored and how
+  the 308 accumulated. <strong>Goal Insights</strong> covers who scores — by age, by position,
+  by name. <strong>Country</strong> takes one team and plots every goal it scored by match and
+  minute, coloured by whether that team was losing, drawing or winning at that moment.
+  <strong>Venue</strong> takes one stadium and places it among the sixteen. A dual-handle
+  minute slider scopes every chart to a window of the match, and because it runs on the derived
+  sort key, a window ending at 90 still contains the 90+4 goals.
+</p>
 
 <h2>Why I built it</h2>
 <p>
@@ -130,7 +141,7 @@ for event in sorted(events, key=lambda e: e["order"]):
 
 <h2>Validation, because a silent break is the real risk</h2>
 <p>
-  The pipeline refuses to write anything until fifteen assertions pass. Five check against
+  The pipeline refuses to write anything until twenty-two assertions pass. Several check against
   facts published elsewhere, so an upstream change can't slip through unnoticed:
 </p>
 <pre><code>[ok] matches                          104
@@ -152,7 +163,15 @@ for event in sorted(events, key=lambda e: e["order"]):
   interpreter. It runs on any Python 3 on any machine, today and in two years.</li>
   <li><strong>No charting library.</strong> The charts are hand-written SVG. That sounds like
   extra work until you try to make a library produce 2px gaps between stacked segments and
-  rounded ends only at the data end. It also means no CDN, so the page works offline.</li>
+  rounded ends only at the data end. Nothing on the page loads from a CDN except the two
+  typefaces, and those have declared fallbacks.</li>
+  <li><strong>Two feeds, joined and validated.</strong> Squad lists give every scorer a position
+  and a date of birth, which is where "which kind of player scores, and at what age" comes from.
+  Both feeds are the same public-domain source, so the join costs nothing in dependencies — but
+  178 scorer names had to be matched against squad lists, and a wrong match files a striker's
+  goals under a defender. Exact matching got 148. Folding accents got 162. Two team aliases and
+  six hand-checked transliterations got the rest. Nothing is fuzzy-matched: a name that will not
+  join fails the build rather than landing in an "Unknown" bucket.</li>
   <li><strong>The colours were validated, not chosen.</strong> The palette was run through a
   colourblind-separation check in both light and dark modes rather than eyeballed. Score
   state is encoded as diverging — trailing and leading are opposite poles — because it's
