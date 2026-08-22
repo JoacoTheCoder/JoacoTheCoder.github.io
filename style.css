@@ -167,6 +167,16 @@ a { color: inherit; }
   color: var(--accent);
 }
 
+/* The hero headline is a rail of fields, with the hairline running out to the
+   right the way .eyebrow does. Separators need their own padding: the flex
+   context collapses the whitespace around them. */
+.hero h1.rail { display: flex; align-items: center; flex-wrap: wrap; }
+.hero h1.rail .sep { color: var(--muted); font-weight: 400; padding: 0 0.34em; }
+.hero h1.rail::after {
+  content: ""; flex: 1; height: 1px; background: var(--rule);
+  margin-left: 22px; min-width: 40px;
+}
+
 .hero-lede {
   font-size: 16.5px;
   color: var(--ink-2);
