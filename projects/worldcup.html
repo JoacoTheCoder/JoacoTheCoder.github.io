@@ -55,10 +55,13 @@
 
 <h2>Why I built it</h2>
 <p>
-  I saw a World Cup dashboard on LinkedIn and realised I had no data visualization work
-  of my own. I'm comfortable in SQL and in getting data into shape; I had almost nothing
-  to show for the part where someone else reads it. So I built one — and made the
-  derivation, not the charts, the actual project.
+  We all know how it ended. Spain on top, and I watched the whole thing the way a fan
+  watches — pure passion, no notebook.
+</p>
+<p>
+  When it was over I wanted to keep living in it, just through a different lens. So I went
+  to the data to ask whether it told the same story I'd just watched. Some of it did. Some
+  of it didn't.
 </p>
 
 <h2>The source is thin on purpose</h2>
@@ -114,14 +117,15 @@ for event in sorted(events, key=lambda e: e["order"]):
   the answer.
 </p>
 
-<h2>Three traps in the data</h2>
+<h2>Four traps I had to handle</h2>
 
 <h3>1. <code>ft</code> is not the final score</h3>
 <p>
   It's the score after 90 minutes. Five matches went to extra time and four of those to
   penalties, so anything keyed on <code>ft</code> alone calls the wrong winner — including
-  both quarter-finals that went long. Precedence has to be shootout, then extra time, then
-  regulation. Belgium–Senegal reads <code>ft [2,2]</code> and finished 3–2.
+  both quarter-finals that went long. I resolve the result as shootout, then extra time,
+  then regulation, so Belgium–Senegal reads <code>ft [2,2]</code> in the feed and 3–2 on the
+  dashboard. Extra-time goals keep their real minute, which is why the slider runs to 120.
 </p>
 
 <h3>2. Own goals are credited to the beneficiary</h3>
@@ -129,14 +133,25 @@ for event in sorted(events, key=lambda e: e["order"]):
   Miro Muheim is Swiss but appears under <code>goals1</code> of <em>Qatar v Switzerland</em>.
   So the team credit is already right — but the <em>player</em> played for the other side.
   Attribute the goal to his listed team and you misassign 14 goals in every player-level
-  cut. The pipeline carries <code>team</code> and <code>scorer_team</code> as separate columns.
+  cut. I carry <code>team</code> and <code>scorer_team</code> as separate columns, and I drop
+  own goals from every position and scorer cut: a defender putting through his own net is
+  not evidence about how often defenders score.
 </p>
 
 <h3>3. Stoppage time is not the minute it follows</h3>
 <p>
   <code>"90+4"</code> has to sort after the 90th minute and before the 91st, and must never
   collapse into <code>90</code> — a stoppage-time winner is a different event from a
-  90th-minute one. Parsed as <code>(base, stoppage, base + stoppage/1000)</code>.
+  90th-minute one. I parse it as <code>(base, stoppage, base + stoppage/1000)</code>, so it
+  sorts correctly and a window ending at 90 still contains it.
+</p>
+
+<h3>4. The stadium file mixes three coordinate notations</h3>
+<p>
+  <code>49°16'36"N</code>, <code>40°48'48.7"N</code> and <code>37.403°N</code> all appear in
+  the same file. I wrote the parser to take all three, because handling only the first drops
+  four venues off the map without erroring — the failure mode I'd never have caught by
+  looking at the chart.
 </p>
 
 <h2>Validation, because a silent break is the real risk</h2>
@@ -165,9 +180,10 @@ for event in sorted(events, key=lambda e: e["order"]):
   extra work until you try to make a library produce 2px gaps between stacked segments and
   rounded ends only at the data end. Nothing on the page loads from a CDN except the two
   typefaces, and those have declared fallbacks.</li>
-  <li><strong>Two feeds, joined and validated.</strong> Squad lists give every scorer a position
-  and a date of birth, which is where "which kind of player scores, and at what age" comes from.
-  Both feeds are the same public-domain source, so the join costs nothing in dependencies — but
+  <li><strong>Four sources, joined and validated.</strong> Matches, squads and stadiums all come
+  from the same public-domain feed, plus Natural Earth coastlines for the venue map. Squad lists
+  give every scorer a position and a date of birth, which is where "which kind of player scores,
+  and at what age" comes from. Same licence, no API key, so the join costs nothing — but
   178 scorer names had to be matched against squad lists, and a wrong match files a striker's
   goals under a defender. Exact matching got 148. Folding accents got 162. Two team aliases and
   six hand-checked transliterations got the rest. Nothing is fuzzy-matched: a name that will not
@@ -180,11 +196,21 @@ for event in sorted(events, key=lambda e: e["order"]):
   upstream changes.</li>
 </ul>
 
-<h2>What I'd do next</h2>
+<h2>What this data can't tell you</h2>
 <p>
-  Player positions would open up a lot — whether defenders scored more from set pieces late,
-  for one — but that needs a 300-plus player lookup that doesn't exist in any free source.
-  The honest version of this project stops where the data stops.
+  Two things I wanted are published nowhere in the public-domain sources, at any price:
+</p>
+<ul>
+  <li><strong>Attendance.</strong> The Venue view shows seats instead, labelled as capacity —
+  it answers "how big is this ground", not "how full was it", and the axis says so. Calling
+  capacity attendance would have been the easy lie.</li>
+  <li><strong>Coaches.</strong> The Country header carries flag, confederation and group, and
+  stops there rather than pulling a name off a wiki page I can't validate against anything.</li>
+</ul>
+<p>
+  Position and age I <em>did</em> get, because the same public-domain repo also publishes
+  the 48 squad lists — no paid lookup involved. That join is the work described above,
+  and it's why the Goal Insights view can plot scorers by age and position at all.
 </p>
 
 </div>
